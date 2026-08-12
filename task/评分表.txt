@@ -1,5 +1,7 @@
-检查项：业务交付与Node.js入口
-检查项内容：题面列出的完成程序和四份业务计划位于约定路径，入口由Node.js完成处理
+总分100分
+
+1. 业务交付与Node.js入口
+分值：15分
 标准答案：运行npm run process后，程序正常结束，CSV、JSONL与JSON均可解析
 关键字段：约定相对路径；入口退出状态；CSV表头；JSONL与JSON结构
 容差：路径大小写逐字比较；CSV允许必要引号及LF或CRLF行尾；JSON对象键序不计
@@ -10,8 +12,8 @@
 优先级：Gate项
 所属层级：L8运行验证或可执行行为层
 
-检查项：桶级保留期与对象覆盖
-检查项内容：每个对象按所属桶规则和策略评估日计算年龄并获得唯一决策
+2. 桶级保留期与对象覆盖
+分值：20分
 标准答案：candidate_age_days采用完整UTC天数；delete_after_days来自对象bucket对应规则；决策表按object_key覆盖对象清单
 关键字段：object_inventory.csv中的object_key、bucket、last_modified_utc；retention_policy.json中的as_of_date与bucket_rules；retention_decisions.csv中的inventory_index、candidate_age_days、decision
 容差：对象集合按object_key无序比较；inventory_index、年龄和决策枚举精确；日期差没有数值容差
@@ -22,8 +24,8 @@
 优先级：高权重项
 所属层级：L6领域计算与专业规则层
 
-检查项：抑制优先级与冻结期限
-检查项内容：已到期对象按活动指针、有效冻结和CDN路径缺失顺序判断抑制
+3. 抑制优先级与冻结期限
+分值：20分
 标准答案：active_pointer优先；legal hold只在评估日仍有效时生效；需要CDN清理但cdn_path为空时抑制；过期冻结不生效
 关键字段：object_inventory.csv中的active_pointer与cdn_path；legal_holds.csv中的object_key、hold_id、expires_on；retention_decisions.csv中的decision、reason、hold_id、hold_expires_on
 容差：对象按object_key关联；reason、hold_id与hold_expires_on逐值比较，不接受近义枚举
@@ -34,8 +36,8 @@
 优先级：高权重项
 所属层级：L5多源关联与字段一致性层
 
-检查项：CDN批次编排
-检查项内容：需要CDN清理的合格对象按清单顺序和策略上限组成批次
+4. CDN批次编排
+分值：20分
 标准答案：purge_then_delete对象按inventory_index排列，每批path_count不超过max_paths_per_batch，batch_id使用batch_prefix加三位序号
 关键字段：retention_policy.json的cdn_purge；对象决策的cdn_path与purge_batch_id；purge_batches.jsonl的batch_id、paths、object_keys、owner_services、estimated_reclaim_bytes
 容差：批次顺序、对象顺序与路径顺序精确；owner_services按去重后的字典序比较；预计容量以字节计且容差为0
@@ -46,8 +48,8 @@
 优先级：高权重项
 所属层级：L6领域计算与专业规则层
 
-检查项：回收汇总
-检查项内容：按决策类别汇总对象数、容量、CDN批次数和owner集合
+5. 回收汇总
+分值：15分
 标准答案：object_count与total_bytes从对象决策按decision聚合；purge_batch_count来自批次明细；owner_services去重排序
 关键字段：retention_decisions.csv的decision、bytes、owner_service；purge_batches.jsonl；reclaim_summary.csv
 容差：计数与字节以整数比较且容差为0；owner_services按无序集合比较
@@ -58,8 +60,8 @@
 优先级：高权重项
 所属层级：L9跨产物一致性与可追溯层
 
-检查项：计划manifest
-检查项内容：manifest记录评估日、批次参数、计划范围、回收容量和抑制来源
+6. 计划manifest
+分值：10分
 标准答案：as_of_date与max_paths_per_batch来自策略；对象、路径、批次、决策与容量字段由对象决策、批次和汇总复算
 关键字段：batch_manifest.json；retention_policy.json；三份业务明细中的对象、批次、容量和原因字段
 容差：JSON键序和缩进不计；计数与字节容差为0；日期和枚举逐值比较
