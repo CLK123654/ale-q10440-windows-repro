@@ -13,8 +13,8 @@ const evidenceRoot = path.join(repoRoot, 'verification', 'evidence');
 const expectedHashes = {
   '输入数据包.zip': '21db8736444c7f2e251fca978383689b3ed07f93a8a770cb280b6362f9c9dd10',
   'reference.zip': 'f40f7d34f26b79432d09d54ea229d39155e13de92ec3bf1fd5a1d1fe088d9685',
-  '关键标准答案.xlsx': '661bee26b573f74b6c10da3fc6239c9d626eb66e7424757f2ce8fb84e6661931',
-  '任务规格转化.xlsx': '53e90690cf917e76ad4057a2a3155b1bfa563541f097186c0c2f15a5106fa789'
+  '关键标准答案.xlsx': '2f85cb7fa222e7c4f4db76ad9d8aa14f278d6976a01b49652a4cbd04636a59fb',
+  '任务规格转化.xlsx': 'bb9773e2d636cac109c451819c69b5394f3c51b9ce9a007038916f3fc354ffbf'
 };
 const expectedReference = [
   'output/batch_manifest.json',

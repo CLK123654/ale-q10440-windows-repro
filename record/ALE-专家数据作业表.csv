@@ -1,5 +1,5 @@
-"题目ID","任务名称","学科一级分类","学科二级分类","题目难度","任务概要","涉及的专业软件","包含的操作类型","任务prompt‼️","输入数据包（压缩包）‼️","reference（压缩包）‼️","关键标准答案‼️","关键动作","评分表（直接输入内容或使用txt文档）‼️","本项任务的环境依赖","相关专业软件的关键步骤","任务规格转化（excel或txt文档）","是否支持Windows","本地记录说明"
-"","对象存储保留裁决与CDN清理批次编排","Computing, Data & Mathematical Sciences 计算、数据与数学科学","软件工程","高","存储治理团队要为一批图片、缩略图、导出件和边缘日志准备月末清理计划。作业使用Node.js读取对象清单、桶级保留规则和法务冻结记录，逐对象判断近期保留、抑制、CDN清理后删除或直接删除，再按清单顺序编排CDN批次并汇总可回收容量。","Node.js","领域专业软件操作；文件和数据处理；脚本/命令/程序化处理；结果验证","存储治理团队正在准备月末对象清理计划。对象分布在媒体源、缩略图、导出区和日志归档桶中，各桶保留期不同；部分对象仍被活动指针引用，法务冻结单也有有效和过期之分。需要先形成离线计划，交给CDN值班人员和存储管理员复核，不能直接连接生产对象存储或CDN。
+"题目ID","学科一级分类","学科二级分类","题目难度","任务概要","涉及的专业软件","包含的操作类型","任务prompt‼️","输入数据包（压缩包）‼️","reference（压缩包）‼️","关键标准答案‼️","关键动作","评分表（直接输入内容或使用txt文档）‼️","本项任务的环境依赖","相关专业软件的关键步骤","任务规格转化（excel或txt文档）","初标是否已完成","生产专家","完成日期"
+"","Computing, Data & Mathematical Sciences 计算、数据与数学科学","软件工程","高","存储治理团队要为一批图片、缩略图、导出件和边缘日志准备月末清理计划。作业使用Node.js读取对象清单、桶级保留规则和法务冻结记录，逐对象判断近期保留、抑制、CDN清理后删除或直接删除，再按清单顺序编排CDN批次并汇总可回收容量。","Node.js","领域专业软件操作；文件和数据处理；脚本/命令/程序化处理；结果验证","存储治理团队正在准备月末对象清理计划。对象分布在媒体源、缩略图、导出区和日志归档桶中，各桶保留期不同；部分对象仍被活动指针引用，法务冻结单也有有效和过期之分。需要先形成离线计划，交给CDN值班人员和存储管理员复核，不能直接连接生产对象存储或CDN。
 
 输入位于input_data。object_inventory.csv按采集顺序记录对象、容量、最近修改时间、owner和CDN路径；retention_policy.json给出评估日、桶级保留期、是否需要CDN清理以及批次编号规则；legal_holds.csv保存法务冻结记录；starter/build_purge_batches.mjs是待完成文件。README.md说明入口和材料用途。
 
@@ -92,13 +92,13 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 优先级：普通项
 所属层级：L9跨产物一致性与可追溯层","Windows11、macOS及主流64位Linux均受支持。主软件为Node.js20或更高兼容版本，最低版本由输入中的tools/run-task.mjs限定。本题的CSV与JSON解析、UTC日期计算、跨文件关联、稳定分批和多份计划生成都由真实Node.js进程完成，手工表格不能代替这条处理链。
 
-项目不使用第三方npm包，采用Node.js与npm各自的开源许可。package.json提供离线入口；PowerShell、Windows Terminal或系统终端可用于运行npm命令，CSV、JSON和NDJSON查看器只用于抽查计划。安装Node.js时可以联网，正式处理不得连接对象存储、CDN、法务工单系统或其它外部接口。
+项目不使用第三方npm包，采用Node.js与npm各自的开源许可。辅助工具包括PowerShell、Windows Terminal或系统终端，以及用于抽查计划的CSV、JSON和NDJSON查看器。package.json提供离线入口；安装Node.js时可以联网，正式处理不得连接对象存储、CDN、法务工单系统或其它外部接口。
 
-输入目录需要读取权限，同级output目录需要写入权限，不需要管理员权限。普通开发机的一个可用CPU逻辑核心、能够启动Node.js20的内存，以及容纳解压包与输出的可写磁盘即可，GPU不参与处理。入口的30秒处理预算写在tools/run-task.mjs中；本题容易出错的地方是把本机日期当成评估日，或者在CSV的LF与CRLF行尾下读出不同记录数。","1. 用node:fs读取object_inventory.csv、retention_policy.json和legal_holds.csv，取得对象业务键、桶规则、评估日、冻结期限和批次参数。
+输入目录需要读取权限，同级output目录需要写入权限，不需要管理员权限。普通开发机的一个可用CPU逻辑核心、能够启动Node.js20的内存，以及容纳解压包与输出的可写磁盘即可，GPU不参与处理。入口的30秒处理预算写在tools/run-task.mjs中；本题的主要风险是把本机日期当成评估日，或者在CSV的LF与CRLF行尾下读出不同记录数。","1. 用node:fs读取object_inventory.csv、retention_policy.json和legal_holds.csv，取得对象业务键、桶规则、评估日、冻结期限和批次参数。
 2. 在build_purge_batches.mjs中解析CSV与JSON，发现重复object_key、未知bucket或无效批次参数时让Node.js以非零状态结束。
 3. 用Date.parse读取策略as_of_date和last_modified_utc，计算candidate_age_days并按各bucket的delete_after_days划分近期对象与到期候选。
 4. 对到期候选依次判断active_pointer、有效legal hold和缺失cdn_path，在retention_decisions.csv写入首个命中的抑制原因。
 5. 将其余对象分为purge_then_delete和delete_without_cdn，并按inventory_index保持对象清单顺序。
 6. 依据max_paths_per_batch切分CDN对象，用batch_prefix生成批次ID，并向purge_batches.jsonl写入路径、对象键、owner集合和预计回收容量。
 7. 从对象决策与批次聚合reclaim_summary.csv，再把计划范围、容量和抑制来源写入batch_manifest.json。
-8. 在input_data目录运行npm run process，读取本次生成的CSV、JSONL和JSON，按object_key与batch_id核对跨文件关联。","任务规格转化.xlsx","是",""
+8. 在input_data目录运行npm run process，读取本次生成的CSV、JSONL和JSON，按object_key与batch_id核对跨文件关联。","任务规格转化.xlsx","未提交","未提交","未提交"

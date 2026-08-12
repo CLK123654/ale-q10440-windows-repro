@@ -1,5 +1,5 @@
 Windows11、macOS及主流64位Linux均受支持。主软件为Node.js20或更高兼容版本，最低版本由输入中的tools/run-task.mjs限定。本题的CSV与JSON解析、UTC日期计算、跨文件关联、稳定分批和多份计划生成都由真实Node.js进程完成，手工表格不能代替这条处理链。
 
-项目不使用第三方npm包，采用Node.js与npm各自的开源许可。package.json提供离线入口；PowerShell、Windows Terminal或系统终端可用于运行npm命令，CSV、JSON和NDJSON查看器只用于抽查计划。安装Node.js时可以联网，正式处理不得连接对象存储、CDN、法务工单系统或其它外部接口。
+项目不使用第三方npm包，采用Node.js与npm各自的开源许可。辅助工具包括PowerShell、Windows Terminal或系统终端，以及用于抽查计划的CSV、JSON和NDJSON查看器。package.json提供离线入口；安装Node.js时可以联网，正式处理不得连接对象存储、CDN、法务工单系统或其它外部接口。
 
-输入目录需要读取权限，同级output目录需要写入权限，不需要管理员权限。普通开发机的一个可用CPU逻辑核心、能够启动Node.js20的内存，以及容纳解压包与输出的可写磁盘即可，GPU不参与处理。入口的30秒处理预算写在tools/run-task.mjs中；本题容易出错的地方是把本机日期当成评估日，或者在CSV的LF与CRLF行尾下读出不同记录数。
+输入目录需要读取权限，同级output目录需要写入权限，不需要管理员权限。普通开发机的一个可用CPU逻辑核心、能够启动Node.js20的内存，以及容纳解压包与输出的可写磁盘即可，GPU不参与处理。入口的30秒处理预算写在tools/run-task.mjs中；本题的主要风险是把本机日期当成评估日，或者在CSV的LF与CRLF行尾下读出不同记录数。
