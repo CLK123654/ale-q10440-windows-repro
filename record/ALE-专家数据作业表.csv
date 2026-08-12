@@ -20,7 +20,9 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 把其余到期对象分为CDN清理后删除与直接删除。
 按对象清单顺序和策略批次上限编排CDN路径，回写对象批次ID。
 从逐对象决策和批次明细汇总对象数、容量、批次数与owner集合。
-导出完成程序、对象决策、CDN批次、回收汇总和计划manifest。","检查项：业务交付与Node.js入口
+导出完成程序、对象决策、CDN批次、回收汇总和计划manifest。","总分100分。
+
+检查项：业务交付与Node.js入口（15分）
 检查项内容：题面列出的完成程序和四份业务计划位于约定路径，入口由Node.js完成处理
 标准答案：运行npm run process后，程序正常结束，CSV、JSONL与JSON均可解析
 关键字段：约定相对路径；入口退出状态；CSV表头；JSONL与JSON结构
@@ -32,7 +34,7 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 优先级：Gate项
 所属层级：L8运行验证或可执行行为层
 
-检查项：桶级保留期与对象覆盖
+检查项：桶级保留期与对象覆盖（20分）
 检查项内容：每个对象按所属桶规则和策略评估日计算年龄并获得唯一决策
 标准答案：candidate_age_days采用完整UTC天数；delete_after_days来自对象bucket对应规则；决策表按object_key覆盖对象清单
 关键字段：object_inventory.csv中的object_key、bucket、last_modified_utc；retention_policy.json中的as_of_date与bucket_rules；retention_decisions.csv中的inventory_index、candidate_age_days、decision
@@ -44,7 +46,7 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 优先级：高权重项
 所属层级：L6领域计算与专业规则层
 
-检查项：抑制优先级与冻结期限
+检查项：抑制优先级与冻结期限（20分）
 检查项内容：已到期对象按活动指针、有效冻结和CDN路径缺失顺序判断抑制
 标准答案：active_pointer优先；legal hold只在评估日仍有效时生效；需要CDN清理但cdn_path为空时抑制；过期冻结不生效
 关键字段：object_inventory.csv中的active_pointer与cdn_path；legal_holds.csv中的object_key、hold_id、expires_on；retention_decisions.csv中的decision、reason、hold_id、hold_expires_on
@@ -56,7 +58,7 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 优先级：高权重项
 所属层级：L5多源关联与字段一致性层
 
-检查项：CDN批次编排
+检查项：CDN批次编排（20分）
 检查项内容：需要CDN清理的合格对象按清单顺序和策略上限组成批次
 标准答案：purge_then_delete对象按inventory_index排列，每批path_count不超过max_paths_per_batch，batch_id使用batch_prefix加三位序号
 关键字段：retention_policy.json的cdn_purge；对象决策的cdn_path与purge_batch_id；purge_batches.jsonl的batch_id、paths、object_keys、owner_services、estimated_reclaim_bytes
@@ -68,7 +70,7 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 优先级：高权重项
 所属层级：L6领域计算与专业规则层
 
-检查项：回收汇总
+检查项：回收汇总（15分）
 检查项内容：按决策类别汇总对象数、容量、CDN批次数和owner集合
 标准答案：object_count与total_bytes从对象决策按decision聚合；purge_batch_count来自批次明细；owner_services去重排序
 关键字段：retention_decisions.csv的decision、bytes、owner_service；purge_batches.jsonl；reclaim_summary.csv
@@ -80,7 +82,7 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 优先级：高权重项
 所属层级：L9跨产物一致性与可追溯层
 
-检查项：计划manifest
+检查项：计划manifest（10分）
 检查项内容：manifest记录评估日、批次参数、计划范围、回收容量和抑制来源
 标准答案：as_of_date与max_paths_per_batch来自策略；对象、路径、批次、决策与容量字段由对象决策、批次和汇总复算
 关键字段：batch_manifest.json；retention_policy.json；三份业务明细中的对象、批次、容量和原因字段
@@ -90,11 +92,13 @@ CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依�
 客观硬性标准：manifest的每个业务字段都能定位到公开输入或交付明细
 阈值：manifest中每个业务字段均与策略或交付明细一致
 优先级：普通项
-所属层级：L9跨产物一致性与可追溯层","Windows11、macOS及主流64位Linux均受支持。主软件为Node.js20或更高兼容版本，最低版本由输入中的tools/run-task.mjs限定。本题的CSV与JSON解析、UTC日期计算、跨文件关联、稳定分批和多份计划生成都由真实Node.js进程完成，手工表格不能代替这条处理链。
+所属层级：L9跨产物一致性与可追溯层","操作系统： Windows11、macOS或主流64位Linux。
 
-项目不使用第三方npm包，采用Node.js与npm各自的开源许可。辅助工具包括PowerShell、Windows Terminal或系统终端，以及用于抽查计划的CSV、JSON和NDJSON查看器。package.json提供离线入口；安装Node.js时可以联网，正式处理不得连接对象存储、CDN、法务工单系统或其它外部接口。
+主软件为Node.js，使用20或更高兼容版本。代码执行依赖Node.js内置的文件系统、路径和数据处理模块，npm负责启动离线入口。
 
-输入目录需要读取权限，同级output目录需要写入权限，不需要管理员权限。普通开发机的一个可用CPU逻辑核心、能够启动Node.js20的内存，以及容纳解压包与输出的可写磁盘即可，GPU不参与处理。入口的30秒处理预算写在tools/run-task.mjs中；本题的主要风险是把本机日期当成评估日，或者在CSV的LF与CRLF行尾下读出不同记录数。","1. 用node:fs读取object_inventory.csv、retention_policy.json和legal_holds.csv，取得对象业务键、桶规则、评估日、冻结期限和批次参数。
+运行账号需要读取input_data并写入同级output目录。处理过程只使用本地对象清单、保留策略和法务冻结记录。
+
+当前批次适合普通64位多核CPU和常规办公内存，GPU不参与处理。磁盘应能容纳解压后的输入、处理缓冲和五份交付文件。需设置有限超时，覆盖本题批次处理并避免异常无限等待。","1. 用node:fs读取object_inventory.csv、retention_policy.json和legal_holds.csv，取得对象业务键、桶规则、评估日、冻结期限和批次参数。
 2. 在build_purge_batches.mjs中解析CSV与JSON，发现重复object_key、未知bucket或无效批次参数时让Node.js以非零状态结束。
 3. 用Date.parse读取策略as_of_date和last_modified_utc，计算candidate_age_days并按各bucket的delete_after_days划分近期对象与到期候选。
 4. 对到期候选依次判断active_pointer、有效legal hold和缺失cdn_path，在retention_decisions.csv写入首个命中的抑制原因。
