@@ -1,0 +1,8 @@
+1. 用node:fs读取object_inventory.csv、retention_policy.json和legal_holds.csv，取得对象业务键、桶规则、评估日、冻结期限和批次参数。
+2. 在build_purge_batches.mjs中解析CSV与JSON，发现重复object_key、未知bucket或无效批次参数时让Node.js以非零状态结束。
+3. 用Date.parse读取策略as_of_date和last_modified_utc，计算candidate_age_days并按各bucket的delete_after_days划分近期对象与到期候选。
+4. 对到期候选依次判断active_pointer、有效legal hold和缺失cdn_path，在retention_decisions.csv写入首个命中的抑制原因。
+5. 将其余对象分为purge_then_delete和delete_without_cdn，并按inventory_index保持对象清单顺序。
+6. 依据max_paths_per_batch切分CDN对象，用batch_prefix生成批次ID，并向purge_batches.jsonl写入路径、对象键、owner集合和预计回收容量。
+7. 从对象决策与批次聚合reclaim_summary.csv，再把计划范围、容量和抑制来源写入batch_manifest.json。
+8. 在input_data目录运行npm run process，读取本次生成的CSV、JSONL和JSON，按object_key与batch_id核对跨文件关联。

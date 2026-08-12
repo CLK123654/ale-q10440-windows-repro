@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "scanned_sources": 221,
+  "violations": [],
+  "answer_sheets": [
+    "交付物答案清单",
+    "固定字段答案",
+    "固定集合答案",
+    "固定数值答案",
+    "允许变体答案"
+  ],
+  "specification_sheets": [
+    "任务规格转化"
+  ],
+  "task_spec_row_count": 19,
+  "task_spec_column_count": 2,
+  "task_asset_id": "node_object_retention_cdn_purge_planning",
+  "task_asset_id_valid": true,
+  "forbidden_spec_labels": [],
+  "declared_delivery_paths": [
+    "output/batch_manifest.json",
+    "output/purge_batches.jsonl",
+    "output/reclaim_summary.csv",
+    "output/retention_decisions.csv",
+    "output/src/build_purge_batches.mjs"
+  ],
+  "reference_paths": [
+    "output/batch_manifest.json",
+    "output/purge_batches.jsonl",
+    "output/reclaim_summary.csv",
+    "output/retention_decisions.csv",
+    "output/src/build_purge_batches.mjs"
+  ],
+  "business_inputs": [
+    "input_data/object_inventory.csv",
+    "input_data/retention_policy.json",
+    "input_data/legal_holds.csv"
+  ],
+  "business_inputs_present": true,
+  "task_field_names": [
+    "任务名称",
+    "学科一级分类",
+    "学科二级分类",
+    "题目难度",
+    "任务概要",
+    "涉及的专业软件",
+    "包含的操作类型",
+    "任务prompt‼️",
+    "输入数据包（压缩包）‼️",
+    "reference（压缩包）‼️",
+    "关键标准答案‼️",
+    "关键动作",
+    "评分表（直接输入内容或使用txt文档）‼️",
+    "本项任务的环境依赖",
+    "相关专业软件的关键步骤",
+    "任务规格转化（excel或txt文档）",
+    "是否支持Windows"
+  ],
+  "task_field_count": 17,
+  "task_field_checks": {
+    "field_name_whitelist_exact_17": true,
+    "primary_category": true,
+    "secondary_category": true,
+    "difficulty": true,
+    "software": true,
+    "operation_types": true,
+    "windows": true,
+    "attachment_names": true,
+    "text_mirrors": true,
+    "ale_csv_header": true,
+    "score_item_count": true,
+    "score_item_structure": true,
+    "score_priority_enum": true,
+    "score_layer_enum": true,
+    "gate_item_limit": true,
+    "software_steps_numbered": true
+  },
+  "humanizer_score": 47,
+  "candidate_score_answer_leak_hits": 0,
+  "online_ai_detector_used_as_conclusion": false
+}

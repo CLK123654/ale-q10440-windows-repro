@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "gate": "candidate_score_answer_leak_scan",
+  "source": "评分表.txt",
+  "rules": [
+    "sample_object_or_hold",
+    "sample_bucket",
+    "complete_result_set",
+    "fixed_count_or_distribution",
+    "ordered_answer_values",
+    "sample_result_values"
+  ],
+  "hits": [],
+  "hit_count": 0,
+  "pass": true
+}

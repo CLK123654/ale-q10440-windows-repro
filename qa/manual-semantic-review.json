@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "result": "PASS",
+  "review_type": "current_artifact_manual_semantic_review",
+  "online_ai_detection_used_as_conclusion": false,
+  "real_role_and_consumers": {
+    "requesting_role": "存储治理团队为月末对象清理准备离线计划",
+    "consumers": [
+      "CDN值班人员从批次文件安排边缘路径清理",
+      "存储管理员从对象决策执行删除或保留",
+      "法务人员抽查冻结抑制原因",
+      "容量团队依据汇总和计划manifest安排回收"
+    ],
+    "assessment": "角色、交付物和后续决策之间存在直接使用关系"
+  },
+  "actually_consumed_inputs": [
+    {
+      "path": "input_data/object_inventory.csv",
+      "use": "提供对象业务键、桶、容量、修改时间、活动指针、CDN路径和清单顺序"
+    },
+    {
+      "path": "input_data/retention_policy.json",
+      "use": "提供评估日、逐桶保留期、CDN要求、批次前缀和批次上限"
+    },
+    {
+      "path": "input_data/legal_holds.csv",
+      "use": "提供冻结单身份、对象关联和到期日"
+    }
+  ],
+  "continuous_action_chain": [
+    "按object_key和bucket关联对象与桶规则",
+    "用as_of_date和last_modified_utc计算完整UTC年龄并判断到期",
+    "对到期对象依次处理活动指针、有效冻结和CDN路径缺失",
+    "把可处置对象分为CDN清理后删除与直接删除",
+    "按清单顺序和max_paths_per_batch编排CDN批次",
+    "从逐对象决策与批次聚合容量和计划manifest"
+  ],
+  "main_software_indispensability": {
+    "software": "Node.js",
+    "native_operations": [
+      "真实Node.js进程通过node:fs读取CSV和JSON",
+      "Date.parse完成UTC日期计算",
+      "跨文件Map关联和确定性数组分批",
+      "同一入口生成CSV、JSONL和JSON交付物"
+    ],
+    "assessment": "任务交付包含可维护的Node.js程序和离线批处理入口，手工表格不能替代程序行为"
+  },
+  "hard_number_sources": [
+    {
+      "value": "评估日、逐桶保留天数、批次上限",
+      "source": "input_data/retention_policy.json中的as_of_date、bucket_rules和cdn_purge"
+    },
+    {
+      "value": "对象容量和最近修改时间",
+      "source": "input_data/object_inventory.csv中的bytes与last_modified_utc"
+    },
+    {
+      "value": "冻结到期日",
+      "source": "input_data/legal_holds.csv中的expires_on"
+    },
+    {
+      "value": "批次三位序号",
+      "source": "任务prompt公开的下游批次编号合同"
+    },
+    {
+      "value": "Node.js20和30秒入口预算",
+      "source": "输入中的tools/run-task.mjs"
+    }
+  ],
+  "reasoning_closure": {
+    "prompt_to_delivery": "题面逐项声明五个交付路径及各自消费者",
+    "delivery_to_scoring": "六个评分项覆盖入口、保留期、抑制、CDN批次、容量汇总和manifest",
+    "scoring_to_answer": "五页标答保存精确路径、抑制字段、对象与批次集合、聚合数值和允许变体",
+    "answer_to_reference": "交付清单路径与reference.zip根目录成员逐字一致，字段、集合和数值均来自Reference产物",
+    "reference_to_input": "Reference程序只读取三份公开业务输入，按题面规则生成全部业务计划"
+  },
+  "ai_trace_review": {
+    "unreasonable_task": false,
+    "obvious_hallucination": false,
+    "pseudo_citation": false,
+    "vague_attribution": false,
+    "broken_reasoning_chain": false,
+    "candidate_visible_authoring_voice": false,
+    "notes": "没有外部引用或模糊权威；全部精确规则来自公开输入或题面业务合同；工程复现门禁只保存在内部QA与仓库检查程序"
+  }
+}

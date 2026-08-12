@@ -1,0 +1,16 @@
+存储治理团队正在准备月末对象清理计划。对象分布在媒体源、缩略图、导出区和日志归档桶中，各桶保留期不同；部分对象仍被活动指针引用，法务冻结单也有有效和过期之分。需要先形成离线计划，交给CDN值班人员和存储管理员复核，不能直接连接生产对象存储或CDN。
+
+输入位于input_data。object_inventory.csv按采集顺序记录对象、容量、最近修改时间、owner和CDN路径；retention_policy.json给出评估日、桶级保留期、是否需要CDN清理以及批次编号规则；legal_holds.csv保存法务冻结记录；starter/build_purge_batches.mjs是待完成文件。README.md说明入口和材料用途。
+
+使用策略中的as_of_date计算每个对象截至评估日的完整UTC天数，再按所属bucket的delete_after_days判断是否到期。未到期对象保留。已到期对象依次检查active_pointer、评估日仍有效的legal hold以及必须清理CDN却缺少cdn_path的情况，命中后进入抑制清单。已过期冻结单不能继续抑制对象。
+
+剩余到期对象根据桶规则分为purge_then_delete和delete_without_cdn。需要CDN清理的对象保持object_inventory.csv顺序，按cdn_purge.max_paths_per_batch分批，批次编号由batch_prefix和三位序号组成。retention_decisions.csv要覆盖每个对象并写明决策、原因、冻结、CDN路径、批次和容量；reclaim_summary.csv按决策类别汇总对象数、容量、批次数和owner集合；batch_manifest.json供存储管理员核对本次计划范围。
+
+把完成版保存为output/src/build_purge_batches.mjs，在input_data目录运行npm run process。交付以下文件：
+output/src/build_purge_batches.mjs
+output/retention_decisions.csv
+output/purge_batches.jsonl
+output/reclaim_summary.csv
+output/batch_manifest.json
+
+CDN值班人员使用purge_batches.jsonl安排边缘清理，存储管理员依据retention_decisions.csv执行对象处置，法务人员抽查抑制原因，容量团队用汇总和manifest安排回收。全部结果按业务主键和清单顺序保持稳定，正式处理全程离线。
